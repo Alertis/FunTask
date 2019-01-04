@@ -13,19 +13,30 @@ export default class Candidate extends Component {
     super(props);
     this.state = {
       token: null,
+      fullName:''
     };
   }
  
   _onPress() {
-    Alert.alert('My Informations')
+    Alert.alert('My Informations','Client-ID: '+this.state.token+' \n Kullanıcı Adı: '+this.state.fullName)
+  }
+
+  componentWillMount(){
+    uti.FetchData(con.HOST_URL.GET_URL+this.props.token+"/").then(res => {
+      this.setState({
+        token:this.props.token,
+        fullName:res["candidate"]["candidateName"]
+      });
+    })
+    
   }
   
   render() {
-    const candidateToken = this.props.token
+      
     return (
       <View style={styles.container}>
         <Text styles={styles.welcome}>Welcome</Text>
-        <Text styles={styles.welcome}>{candidateToken}</Text>
+        <Text styles={styles.welcome}>{this.state.fullName}</Text>
 
         <TouchableOpacity onPress={() => this._onPress()} style={styles.actionButton}>
           <Text style={styles.actionText}>Get My Informations</Text>

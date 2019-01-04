@@ -23,7 +23,7 @@ export default class Notice extends Component {
         this.setState({
           token: res.candidate.candidateId
         });
-        Actions.Candidate({ token: res.candidate.candidateId })
+        Actions.Candidate({ token: res.candidate.candidateId, fullName:this.state.fullName })
       })
     } else {
       Alert.alert('You should enter your name.')

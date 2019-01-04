@@ -1,13 +1,15 @@
 import * as con from '../config/config'
 
 export function FetchData(url = null) {
+  console.log("URL: "+url)
   return new Promise(function (res, rej) {
     fetch(url, {
       headers: {
         "Content-Type": "application/json",
+        "CLIENT-KEY":con.CLIENT_KEY
       }
     })
-      .then(resp => resp.json())
+    .then(resp => resp.json())
       .then(function (data) {
         return res(data);
       })
