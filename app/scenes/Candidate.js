@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Alert, TouchableOpacity,AsyncStorage } from 'react-native';
 import { Actions } from "react-native-router-flux";
+import RNGooglePlaces from 'react-native-google-places';
 import * as con from '../config/config'
 import * as uti from '../utils/Utils'
 
@@ -13,9 +14,24 @@ export default class Candidate extends Component {
     super(props);
     this.state = {
       token: null,
-      fullName:''
+      fullName:'',
+      long:28.94966,
+      lat:41.01384
     };
   }
+
+  openSearchModal() {
+    RNGooglePlaces.openAutocompleteModal({
+      type: 'establishment',
+      latitude:this.state.lat,
+      longitude: this.state.long,
+    })
+    .then((place) => {
+      Alert.alert(place.name,'Phone Number: '+place.phoneNumber+' \n Website: '+place.website+' \n Address: '+place.address);
+    })
+    .catch(error => console.log(error.message)); 
+  }
+
  
   _onPress() {
     Alert.alert('My Informations','Client-ID: '+this.state.token+' \n Kullanıcı Adı: '+this.state.fullName)
@@ -27,7 +43,16 @@ export default class Candidate extends Component {
         token:this.props.token,
         fullName:res["candidate"]["candidateName"]
       });
+    });
+    RNGooglePlaces.getCurrentPlace()
+    .then((result)=>{
+      this.setState({
+        lat:result[0].latitude,
+        long:result[0].longitude
+      });
+      console.log("Longitude: "+result[0].longitude+" Latitude"+result[0].latitude);
     })
+    .catch((error)=>console.log(error.message));
     
   }
   
@@ -40,6 +65,9 @@ export default class Candidate extends Component {
 
         <TouchableOpacity onPress={() => this._onPress()} style={styles.actionButton}>
           <Text style={styles.actionText}>Get My Informations</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionButton} onPress={() => this.openSearchModal()}>
+          <Text style={styles.actionText}>Pick a Place</Text>
         </TouchableOpacity>
       </View>
 
